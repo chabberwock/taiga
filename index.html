@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.10/angular.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script src="/js/service.js"></script>
+    <script src="/js/controller.js"></script>
+
+</head>
+<body ng-app="app" ng-controller="ClientController as vm">
+    <div class="container">
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Тайга</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="javascript:;">Клиенты <span class="sr-only">(current)</span></a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input ng-model="vm.searchLastName" class="form-control mr-sm-2" type="search" placeholder="Фамилия">
+                    <input ng-model="vm.searchPhone" class="form-control mr-sm-2" type="search" placeholder="Телефон">
+                    <button ng-click="vm.search()" class="btn btn-outline-success my-2 my-sm-0">Search</button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="padding-top: 1em">
+            <div style="padding-bottom: 1em"><a ng-click="vm.add()" class="btn btn-primary" href="javascript:;">Добавить</a></div>
+
+            <table class="table">
+                <tr>
+                    <th>id</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th></th>
+                </tr>
+                <tr ng-repeat="client in vm.clients">
+                    <td ng-bind="client.id"></td>
+                    <td ng-bind="client.lastName"></td>
+                    <td ng-bind="client.firstName"></td>
+                    <td ng-bind="client.patronymic"></td>
+                    <td>
+                        <a href="javascript:;" ng-click="vm.edit(client)"><i class="fas fa-edit"></i></a>
+                        <a href="javascript:;" ng-click="vm.remove(client)"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Modal -->
+            <div class="modal fade" id="edit-area" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Клиент</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <label for="lastName">Фамилия</label>
+                                    <input ng-model="vm.currentItem.lastName" class="form-control" id="lastName" placeholder="Фамилия">
+                                </div>
+                                <div class="form-group">
+                                    <label for="firstName">Имя</label>
+                                    <input ng-model="vm.currentItem.firstName" class="form-control" id="firstName" placeholder="Имя">
+                                </div>
+                                <div class="form-group">
+                                    <label for="patronymic">Отчество</label>
+                                    <input ng-model="vm.currentItem.patronymic" class="form-control" id="patronymic" placeholder="Отчество">
+                                </div>
+                                <div class="form-group">
+                                    <label for="birthdate">Дата рождения</label>
+                                    <input type="date" ng-model="vm.currentItem.birthdate" class="form-control" id="birthdate" placeholder="гггг-мм-дд">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Пол</label>
+                                    <select class="form-control" ng-options="item as item.label for item in vm.genders track by item.value" ng-model="vm.currentItem.gender" id="gender">
+                                        <option value="1">Мужской</option>
+                                        <option value="2">Женский</option>
+                                    </select>
+                                </div>
+                                <p>Телефоны: <a ng-click="vm.addPhone()" href="javascript:;"><i class="fas fa-plus-circle"></i></a></p>
+                                <div class="form-group" ng-repeat="phone in vm.currentItem.phones">
+                                    <div class="form-row">
+                                        <div class="col">
+                                            <input ng-model="phone.value" class="form-control" placeholder="79876543210">
+                                        </div>
+                                        <div class="col">
+                                            <a ng-click="vm.removePhone(phone)" href="javascript:;"><i class="fas fa-minus-circle"></i></a>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+
+
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            <button ng-click="vm.save()" type="button" class="btn btn-primary">Отправить в тайгу</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+</body>
+</html>
